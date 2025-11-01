@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIET-LMS Smartpass Portal</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      display: flex;
+      min-height: 100vh;
+      flex-direction: row;
+      overflow-y: auto; /* enables vertical scrolling */
+      background-color: #fff;
+    }
+
+    /* Left section */
+    .left {
+      flex: 1;
+      background-color: #004b23;
+      color: #f7f7a1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px;
+    }
+
+    .left h1 {
+      font-size: 2rem;
+      color: #ffee00;
+      margin-bottom: 1rem;
+    }
+
+    .left strong {
+      color: #ffee00;
+    }
+
+    .left ul {
+      margin-top: 1rem;
+      line-height: 1.8;
+    }
+
+    /* Right section */
+    .right {
+      flex: 1;
+      background-color: #f7df1e;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .role-card {
+      background-color: white;
+      color: #333;
+      width: 90%;
+      max-width: 400px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      padding: 30px;
+    }
+
+    .role-card img {
+      width: 100px;
+      height: auto;
+      margin-bottom: 20px;
+    }
+
+    .role-card h2 {
+      color: #095221;
+      margin-bottom: 25px;
+    }
+
+    .role-card p {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      background-color: #286749;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background-color: #169a72;
+    }
+
+    footer {
+      margin-top: 30px;
+      font-size: 13px;
+      opacity: 0.8;
+      color: #333;
+    }
+
+    /* Responsive for mobile */
+    @media (max-width: 900px) {
+      body {
+        flex-direction: column;
+        overflow-y: scroll; /* ensures scroll works on small screens */
+      }
+
+      .left, .right {
+        flex: none;
+        width: 100%;
+        height: auto;
+      }
+
+      .left {
+        padding: 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Left Section -->
+  <div class="left">
+    <h1>WELCOME TO SMART PASS</h1>
+    <p><strong>The Sri Shakthi Institute of Engineering and Technology Smartpass Digital Management System (Smartpass-DMS)</strong>
+      is a dedicated online platform developed to simplify and digitalize campus management processes.
+    </p>
+
+    <h4 style="margin-top: 20px;">SIET - Smartpass-DMS</h4>
+    <ul>
+      <li>Real-time data access for students, faculty, and administrators to track records and updates instantly.</li>
+      <li>Digital leave and hostel management that eliminates paperwork and streamlines approval processes.</li>
+      <li>Feedback and grievance handling system to enhance communication between students and staff.</li>
+      <li>A modern, responsive interface designed for smooth navigation across all devices.</li>
+    </ul>
+  </div>
+
+ <!-- Right Section -->
+<div class="right">
+  <div class="role-card" id="mainCard">
+    <img src="logo.png" alt="SIET Logo">
+    <h2>Welcome to Smartpass</h2>
+    <button class="btn" onclick="showRoles()">User</button>
+    <button class="btn" onclick="location.href='adminlogin.html'">Admin</button>
+  </div>
+
+  <!-- Role Selection (Hidden Initially) -->
+  <div class="role-card" id="roleCard" style="display:none;">
+    <img src="logo.png" alt="SIET Logo">
+    <h2>Select Your Role</h2>
+
+    <button class="btn" onclick="goTo('stulogin.html')">Student</button>
+    <button class="btn" onclick="goTo('parent.html')">Parent</button>
+    <button class="btn" onclick="goTo('adlogin.html')">Advisor</button>
+    <button class="btn" onclick="goTo('hodlogin.html')">HOD</button>
+    <button class="btn" onclick="goTo('warlogin.html')">Warden</button>
+
+    <button class="btn" style="background:#6c757d;" onclick="backToMain()">← Back</button>
+  </div>
+
+  <footer>© 2025 Smartpass | All Rights Reserved</footer>
+</div>
+
+<script>
+  function showRoles() {
+    document.getElementById('mainCard').style.display = 'none';
+    document.getElementById('roleCard').style.display = 'block';
+  }
+
+  function backToMain() {
+    document.getElementById('roleCard').style.display = 'none';
+    document.getElementById('mainCard').style.display = 'block';
+  }
+
+  function goTo(page) {
+    window.location.href = page;
+  }
+</script>
+
+
+</body>
+</html>

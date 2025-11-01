@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <title>HOD Login & Signup - Smart Outpass System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #1d471d, #134c0f);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      width: 380px;
+      padding: 2rem;
+      text-align: center;
+      transition: 0.4s;
+    }
+
+    h2 {
+      color: #4a90e2;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      background: #4a90e2;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #3578d4;
+    }
+
+    .toggle-text {
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .toggle-text a {
+      color: #9013fe;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- LOGIN FORM -->
+    <div id="loginForm">
+      <h2>HOD Login</h2>
+      <input type="email" id="loginEmail" placeholder="Email" required>
+      <input type="password" id="loginPassword" placeholder="Password" required>
+      <button onclick="login()">Login</button>
+      <p class="toggle-text">Don't have an account? <a onclick="showSignup()">Signup</a></p>
+    </div>
+
+    <!-- SIGNUP FORM -->
+    <div id="signupForm" class="hidden">
+      <h2>HOD Signup</h2>
+      <input type="text" id="signupName" placeholder="Full Name" required>
+      <input type="email" id="signupEmail" placeholder="Email" required>
+      <input type="text" id="signupDept" placeholder="Department" required>
+      <input type="password" id="signupPassword" placeholder="Password" required>
+      <button onclick="signup()">Signup</button>
+      <p class="toggle-text">Already have an account? <a onclick="showLogin()">Login</a></p>
+    </div>
+  </div>
+
+  <script>
+    // Toggle between Login & Signup
+    function showSignup() {
+      document.getElementById("loginForm").classList.add("hidden");
+      document.getElementById("signupForm").classList.remove("hidden");
+    }
+
+    function showLogin() {
+      document.getElementById("signupForm").classList.add("hidden");
+      document.getElementById("loginForm").classList.remove("hidden");
+    }
+
+    // Signup logic
+    function signup() {
+      const name = document.getElementById("signupName").value.trim();
+      const email = document.getElementById("signupEmail").value.trim();
+      const department = document.getElementById("signupDept").value.trim();
+      const password = document.getElementById("signupPassword").value.trim();
+
+      if (!name || !email || !department || !password) {
+        alert(" Please fill all fields");
+        return;
+      }
+
+      const hodData = { name, email, department, password };
+      localStorage.setItem("hod_" + email, JSON.stringify(hodData));
+
+      alert(" Signup successful! You can now log in.");
+      showLogin(); // switch back to login form
+    }
+
+    // Login logic
+    function login() {
+      const email = document.getElementById("loginEmail").value.trim();
+      const password = document.getElementById("loginPassword").value.trim();
+
+      const stored = localStorage.getItem("hod_" + email);
+      if (!stored) {
+        alert(" Account not found. Please signup first.");
+        return;
+      }
+
+      const hod = JSON.parse(stored);
+      if (hod.password === password) {
+        alert("Login successful! Welcome, " + hod.name);
+        window.location.href = "hoddhash.html"; // redirect after login
+      } else {
+        alert(" Incorrect password.");
+      }
+    }
+  </script>
+</body>
+</html>

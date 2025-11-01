@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Parent Dashboard – Smart Outpass</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    font-family: "Poppins", sans-serif;
+    background: #f0fff4;
+    margin: 0;
+    padding: 0;
+  }
+  .card {
+    max-width: 430px;
+    margin: 45px auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  button {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  button.approve {
+    background: #2ecc71;
+    color: #fff;
+  }
+  button.reject {
+    background: #e74c3c;
+    color: #fff;
+  }
+  button.logout {
+    background: #6c757d;
+    color: #fff;
+    float: right;
+  }
+  .req {
+    border: 1px solid #eee;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 8px;
+  }
+  .student-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .student-photo {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #1a531b;
+  }
+  .status {
+    font-size: 13px;
+    color: #666;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h2>Parent Dashboard <button class="logout" onclick="logout()">Logout</button></h2>
+    <div id="reqList"></div>
+  </div>
+
+  <script>
+    const REQS_KEY = 'sp_requests_v3';
+    const ROLE_INDEX = 0; // Parent stage
+
+    function loadReqs() {
+      return JSON.parse(localStorage.getItem(REQS_KEY) || '[]');
+    }
+
+    function saveReqs(r) {
+      localStorage.setItem(REQS_KEY, JSON.stringify(r));
+    }
+
+    function render() {
+      const reqs = loadReqs();
+      const filtered = reqs.filter(r => r.status === 'pending' && r.stageIndex === ROLE_INDEX);
+      const area = document.getElementById('reqList');
+
+      if (!filtered.length) {
+        area.innerHTML = '<p>No pending requests found.</p>';
+        return;
+      }
+
+      area.innerHTML = filtered.map(r => `
+        <div class="req">
+          <div class="student-header">
+            <img src="${r.photo || 'https://via.placeholder.com/60'}" class="student-photo" alt="Profile">
+            <div>
+              <strong>${r.name}</strong><br>
+              <small>Roll No: ${r.roll}</small>
+            </div>
+          </div>
+          <p><b>Department:</b> ${r.dept}</p>
+          <p><b>Year:</b> ${r.year}</p>
+          <p><b>Hostel/Room:</b> ${r.hostel}</p>
+          <hr>
+          <p><b>Leave Type:</b> ${r.leaveType}</p>
+          <p><b>Communication Mode:</b> ${r.communication || 'N/A'}</p>
+          <p><b>Approval From:</b> ${r.approval || 'N/A'}</p>
+          <p><b>Out-Time:</b> ${r.fromDate}</p>
+          <p><b>In-Time:</b> ${r.toDate}</p>
+          <p><b>Halfday:</b> ${r.halfday ? 'Yes' : 'No'}</p>
+          ${r.halfday ? `<p><b>Session:</b> ${r.session}</p>` : ''}
+          <p><b>Reason:</b> ${r.reason}</p>
+          <hr>
+          <p class="status"><b>Status:</b> ${r.status.toUpperCase()}</p>
+          <p class="status"><b>Stage:</b> Parent</p>
+          <div style="margin-top:10px;">
+            <button class="approve" onclick="approve('${r.id}')"> Approve</button>
+            <button class="reject" onclick="rejectReq('${r.id}')"> Reject</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function approve(id) {
+      const reqs = loadReqs();
+      const r = reqs.find(x => x.id === id);
+      if (!r) return;
+      r.stageIndex++; // move to next stage (Advisor)
+      saveReqs(reqs);
+      alert("Approved by Parent!");
+      render();
+    }
+
+    function rejectReq(id) {
+      const reqs = loadReqs();
+      const r = reqs.find(x => x.id === id);
+      if (!r) return;
+      r.status = 'rejected';
+      saveReqs(reqs);
+      alert("Rejected by Parent!");
+      render();
+    }
+
+    function logout() {
+      localStorage.removeItem('logged_parent');
+      window.location = 'parent.html';
+    }
+
+    // 🔄 Auto-refresh every 3 seconds to detect new student submissions
+    render();
+    setInterval(render, 3000);
+  </script>
+</body>
+</html>

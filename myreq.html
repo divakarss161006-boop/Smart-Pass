@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Leave Requests</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #1b5229, #1c5e2a);
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      background: #fff;
+      width: 95%;
+      max-width: 480px;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    h2 {
+      text-align: center;
+      color: #004b23;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: #f9fafb;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 12px;
+    }
+
+    .status {
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .Pending { color: #eab308; }
+    .Approved { color: #16a34a; }
+    .Rejected { color: #dc2626; }
+
+    .btn {
+      display: block;
+      text-align: center;
+      background: #004b23;
+      color: white;
+      text-decoration: none;
+      padding: 10px;
+      margin-top: 20px;
+      border-radius: 8px;
+    }
+
+    .btn:hover {
+      background: #003916;
+    }
+  </style>
+</head>
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+
+<body>
+  <div class="container">
+    <h2>My Leave Requests</h2>
+    <div id="requestsList"></div>
+  </div>
+
+  <script>
+    const student = JSON.parse(localStorage.getItem("loggedInUser"));
+    const list = document.getElementById("requestsList");
+
+    if (!student) {
+      list.innerHTML = "<p style='color:red;text-align:center;'>Please login again.</p>";
+      setTimeout(() => window.location.href = "stulogin.html", 2000);
+    } else {
+      loadRequests();
+    }
+
+    function loadRequests() {
+  const all = JSON.parse(localStorage.getItem("sp_requests_v3") || "[]");
+  const my = all.filter(r => r.studentEmail === student.email);
+
+  if (my.length === 0) {
+    list.innerHTML = "<p style='text-align:center;color:#555;'>No requests found.</p>";
+    return;
+  }
+
+  list.innerHTML = my.map(req => `
+    <div class="card">
+      <strong>${req.leaveType}</strong><br>
+      <small>Submitted: ${req.requestedAt || 'N/A'}</small>
+      <p><b>From:</b> ${req.fromDate}<br>
+      <b>To:</b> ${req.toDate}</p>
+      <p><b>Reason:</b> ${req.reason}</p>
+      <p class="status ${req.status}">Status: ${req.status}</p>
+
+      ${req.status === 'approved' && req.qrCodeData ? `
+        <div style="text-align:center; margin-top:10px;">
+          <canvas id="qr-${req.id}"></canvas>
+          <p style="font-size:12px;color:gray;">Scan this QR at the gate</p>
+        </div>
+      ` : ''}
+    </div>
+  `).join("");
+
+  // Generate QR codes for approved requests
+  my.forEach(req => {
+    if (req.status === 'approved' && req.qrCodeData) {
+      const canvas = document.getElementById(`qr-${req.id}`);
+      if (canvas) {
+        QRCode.toCanvas(canvas, req.qrCodeData);
+      }
+    }
+  });
+}
+
+  </script>
+</body>
+</html>

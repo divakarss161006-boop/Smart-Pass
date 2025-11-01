@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advisor Login & Signup</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #175a23, #174918);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      width: 95%;
+      max-width: 400px;
+      padding: 25px;
+      text-align: center;
+    }
+    h2 {
+      color: #0d9488;
+      margin-bottom: 20px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border: none;
+      background: #0d9488;
+      color: white;
+      font-size: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover { background: #0f766e; }
+    p {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #333;
+    }
+    a {
+      color: #0d9488;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- LOGIN FORM -->
+    <div id="loginBox">
+      <h2>Advisor Login</h2>
+      <input type="email" id="loginEmail" placeholder="Enter Email" required>
+      <input type="password" id="loginPassword" placeholder="Enter Password" required>
+      <button id="btnLogin">Login</button>
+      <p>Don't have an account? <a onclick="showSignup()">Signup</a></p>
+    </div>
+
+    <!-- SIGNUP FORM -->
+    <div id="signupBox" class="hidden">
+      <h2>Advisor Signup</h2>
+      <input type="text" id="signupName" placeholder="Full Name" required>
+      <input type="email" id="signupEmail" placeholder="Email" required>
+      <input type="text" id="signupDept" placeholder="Department" required>
+      <input type="password" id="signupPassword" placeholder="Create Password" required>
+      <button id="btnSignup">Signup</button>
+      <p>Already have an account? <a onclick="showLogin()">Login</a></p>
+    </div>
+  </div>
+
+  <script>
+    const loginBox = document.getElementById("loginBox");
+    const signupBox = document.getElementById("signupBox");
+
+    function showSignup() {
+      loginBox.classList.add("hidden");
+      signupBox.classList.remove("hidden");
+    }
+
+    function showLogin() {
+      signupBox.classList.add("hidden");
+      loginBox.classList.remove("hidden");
+    }
+
+    // ✅ Signup Functionality
+    document.getElementById("btnSignup").addEventListener("click", function() {
+      const name = document.getElementById("signupName").value.trim();
+      const email = document.getElementById("signupEmail").value.trim();
+      const dept = document.getElementById("signupDept").value.trim();
+      const password = document.getElementById("signupPassword").value;
+
+      if (!name || !email || !dept || !password) {
+        alert(" Please fill in all fields.");
+        return;
+      }
+
+      let advisors = JSON.parse(localStorage.getItem("advisors") || "[]");
+
+      // Check if already exists
+      if (advisors.some(a => a.email === email)) {
+        alert(" Account already exists. Please login.");
+        return;
+      }
+
+      advisors.push({ name, email, dept, password });
+      localStorage.setItem("advisors", JSON.stringify(advisors));
+
+      alert(" Advisor Signup Successful! Please login now.");
+      showLogin();
+    });
+
+    // ✅ Login Functionality
+    document.getElementById("btnLogin").addEventListener("click", function() {
+      const email = document.getElementById("loginEmail").value.trim();
+      const password = document.getElementById("loginPassword").value;
+
+      if (!email || !password) {
+        alert(" Please enter email and password.");
+        return;
+      }
+
+      const advisors = JSON.parse(localStorage.getItem("advisors") || "[]");
+      const advisor = advisors.find(a => a.email === email && a.password === password);
+
+      if (!advisor) {
+        alert("Invalid email or password.");
+        return;
+      }
+
+      localStorage.setItem("loggedInAdvisor", JSON.stringify(advisor));
+      alert(" Login Successful!");
+      window.location.href = "advisor.html"; // redirect to advisor dashboard
+    });
+  </script>
+</body>
+</html>

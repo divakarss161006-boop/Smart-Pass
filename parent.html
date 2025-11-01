@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Parent Login | Smart Outpass</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Poppins", sans-serif; }
+    body {
+      background: linear-gradient(135deg, #276730, #206226);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background: #fff;
+      width: 90%;
+      max-width: 360px;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      transition: all 0.4s ease;
+    }
+    h2 { margin-bottom: 15px; color: #333; }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 8px;
+      background-color: #1ef751;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover { background-color: #e08600; }
+    .toggle {
+      color: #08280e;
+      margin-top: 12px;
+      cursor: pointer;
+      font-size: 14px;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="loginBox">
+    <h2>Parent Login</h2>
+    <input type="email" id="loginEmail" placeholder="Email" required>
+    <input type="password" id="loginPassword" placeholder="Password" required>
+    <button onclick="handleLogin()">Login</button>
+    <span class="toggle" onclick="showSignup()">Don’t have an account? Sign Up</span>
+  </div>
+
+  <div class="container hidden" id="signupBox" style="display:none;">
+    <h2>Parent Signup</h2>
+    <input type="text" id="signupName" placeholder="Full Name" required>
+    <input type="email" id="signupEmail" placeholder="Email" required>
+    <input type="password" id="signupPassword" placeholder="Password" required>
+    <input type="text" id="signupStudentRoll" placeholder="Student Roll Number" required>
+    <button onclick="handleSignup()">Sign Up</button>
+    <span class="toggle" onclick="showLogin()">Already have an account? Login</span>
+  </div>
+
+  <script>
+    // ✅ Show signup box
+  // Shared storage key for student–parent–advisor–HOD–warden system
+  const REQS_KEY = 'sp_requests_v3';
+
+  // ✅ Show signup box
+  function showSignup() {
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("signupBox").style.display = "block";
+  }
+
+
+    function showSignup() {
+      document.getElementById("loginBox").style.display = "none";
+      document.getElementById("signupBox").style.display = "block";
+    }
+
+    // ✅ Show login box
+    function showLogin() {
+      document.getElementById("signupBox").style.display = "none";
+      document.getElementById("loginBox").style.display = "block";
+    }
+
+    // ✅ Handle Signup
+    function handleSignup() {
+      const name = document.getElementById("signupName").value.trim();
+      const email = document.getElementById("signupEmail").value.trim();
+      const password = document.getElementById("signupPassword").value.trim();
+      const studentRoll = document.getElementById("signupStudentRoll").value.trim();
+
+      if (!name || !email || !password || !studentRoll) {
+        alert(" Please fill in all fields!");
+        return;
+      }
+
+      const parents = JSON.parse(localStorage.getItem("parents") || "[]");
+
+      if (parents.find(p => p.email === email)) {
+        alert(" Account already exists! Please login.");
+        showLogin();
+        return;
+      }
+
+      parents.push({ name, email, password, studentRoll });
+      localStorage.setItem("parents", JSON.stringify(parents));
+
+      alert(" Signup successful! Please login.");
+      showLogin();
+    }
+
+    // ✅ Handle Login
+    function handleLogin() {
+      const email = document.getElementById("loginEmail").value.trim();
+      const password = document.getElementById("loginPassword").value.trim();
+      const parents = JSON.parse(localStorage.getItem("parents") || "[]");
+
+      const parent = parents.find(p => p.email === email && p.password === password);
+
+      if (parent) {
+        alert(` Welcome, ${parent.name}!`);
+        localStorage.setItem("loggedInParent", JSON.stringify(parent));
+        window.location.href = "parentdash.html"; // Redirect to parent dashboard
+      } else {
+        alert(" Invalid email or password!");
+      }
+    }
+  </script>
+
+</body>
+</html>

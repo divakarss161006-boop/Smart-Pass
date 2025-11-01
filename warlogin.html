@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Warden Login & Signup - SmartPass</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #2e5837, #2b632f);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .container {
+      background: white;
+      width: 370px;
+      padding: 40px 30px;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    img {
+      width: 80px;
+      margin-bottom: 20px;
+    }
+    h2 {
+      margin-bottom: 10px;
+      color: #00b09b;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      outline: none;
+    }
+    button {
+      width: 100%;
+      background: #00b09b;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #009781;
+    }
+    p {
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    a {
+      color: #009781;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Login Form -->
+    <div id="loginForm">
+      <img src="logo.png" alt="College Logo" /> 
+      <h2>Warden Login</h2>
+      <form action="wardendash.html">
+        <input type="text" placeholder="Username" required />
+        <input type="password" placeholder="Password" required />
+        <button type="submit">Login</button>
+        <p>Don’t have an account? <a href="#" onclick="toggleForms()">Sign up</a></p>
+      </form>
+    </div>
+
+    <!-- Signup Form -->
+    <div id="signupForm" class="hidden">
+      <h2>Warden Signup</h2>
+        <input type="text" placeholder="Full Name" required />
+        <input type="text" placeholder="Username" required />
+        <input type="email" placeholder="Email" required />
+        <input type="password" placeholder="Strong Password" required />
+        <button type="submit">Sign Up</button>
+        <p>Already have an account? <a href="#" onclick="toggleForms()">Login</a></p>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function toggleForms() {
+      document.getElementById("loginForm").classList.toggle("hidden");
+      document.getElementById("signupForm").classList.toggle("hidden");
+    }
+  </script>
+</body>
+</html>

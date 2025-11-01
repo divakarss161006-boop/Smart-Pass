@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Student Signup – Smart Outpass System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    font-family: "Poppins", sans-serif;
+    background: linear-gradient(100deg, #215429, #215320);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+  .container {
+    background: #fff;
+    padding: 25px 30px;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    text-align: center;
+  }
+  h2 { margin-bottom: 15px; color:#333; }
+  input, select {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+  }
+  button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 6px;
+    background: #3498db;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  button:hover { opacity: 0.9; }
+  .error { color: red; font-size: 13px; margin-top: 4px; }
+  .profile-pic {
+    width: 100px; height: 100px;
+    border-radius: 50%; object-fit: cover;
+    margin-bottom: 10px;
+    cursor: pointer;
+    border: 2px solid #3498db;
+  }
+  p { font-size: 14px; }
+  a { color: #3498db; text-decoration: none; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Student Signup</h2>
+  <label for="photoUpload">
+    <img id="preview" src="https://via.placeholder.com/100" class="profile-pic" title="Click to upload profile photo">
+  </label>
+  <input type="file" id="photoUpload" accept="image/*" style="display:none;">
+  
+  <input type="text" id="name" placeholder="Full Name" />
+  <input type="text" id="roll" placeholder="Roll Number" />
+   <input type="text" id="dept" placeholder="Department" />
+ 
+    <select id="year">
+        <option value="">Select Year</option>
+        <option>1st Year</option>
+        <option>2nd Year</option>
+        <option>3rd Year</option>
+        <option>4th Year</option>
+    </select>
+     <input type="text" id="hostel" placeholder="Select Hostel/room" />
+    
+    <input type="email" id="email" placeholder="College Email (@srishakthi.ac.in)" />
+    <input type="password" id="password" placeholder="Strong Password (min 8 chars)" />
+    
+  <div class="error" id="msg"></div>
+  <button onclick="signup()">Create Account</button>
+  <p>Already have an account? <a href="stulogin.html">Login</a></p>
+</div>
+
+<script>
+const ALLOWED_DOMAIN = '@srishakthi.ac.in';
+const STRONG_PW_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+let profileData = '';
+
+const photoUpload = document.getElementById('photoUpload');
+const preview = document.getElementById('preview');
+preview.onclick = () => photoUpload.click();
+photoUpload.onchange = e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    preview.src = ev.target.result;
+    profileData = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+};
+
+function getUsers() {
+  return JSON.parse(localStorage.getItem("studentData") || '[]');
+}
+
+function saveUsers(users) {
+  localStorage.setItem("studentData", JSON.stringify(users));
+}
+
+function signup() {
+  const name = document.getElementById("name").value.trim();
+  const roll = document.getElementById("roll").value.trim();
+  const email = document.getElementById("email").value.trim().toLowerCase();
+  const password = document.getElementById("password").value;
+  const dept = document.getElementById("dept").value;
+  const year = document.getElementById("year").value;
+  const hostel = document.getElementById("hostel").value;
+  const msg = document.getElementById("msg");
+
+  msg.style.color = 'red';
+
+  // ✅ Must upload profile photo
+  if (!profileData) { msg.textContent = "Please upload your profile photo."; return; }
+
+  if (!name) { msg.textContent = "Please enter your Full Name."; return; }
+  if (!roll) { msg.textContent = "Please enter your Roll Number."; return; }
+  if (!dept) { msg.textContent = "Please enter your Department."; return; }
+  if (!year) { msg.textContent = "Please select your Year."; return; }
+  if (!hostel) { msg.textContent = "Please enter your Hostel/Room."; return; }
+  if (!email) { msg.textContent = "Please enter your College Email."; return; }
+  if (!password) { msg.textContent = "Please create a Password."; return; }
+
+  if (!email.endsWith(ALLOWED_DOMAIN)) {
+    msg.textContent = "Use official college email (@srishakthi.ac.in).";
+    return;
+  }
+
+  if (!STRONG_PW_REGEX.test(password)) {
+    msg.textContent = "Password must include uppercase, lowercase, number & symbol (min 8 chars).";
+    return;
+  }
+
+  const users = getUsers();
+
+  if (users.some(u => u.email === email)) {
+    msg.textContent = "Email already registered.";
+    return;
+  }
+
+  users.push({
+    role: 'student',
+    name, roll, email, password, dept, year, hostel,
+    photo: profileData
+  });
+
+  saveUsers(users);
+
+  msg.style.color = 'green';
+  msg.textContent = "Account created! Redirecting to login...";
+  setTimeout(() => { window.location.href = "stulogin.html"; }, 1500);
+}
+</script>
+
+</body>
+</html>
