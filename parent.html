@@ -109,19 +109,41 @@
         return;
       }
 
-      const parents = JSON.parse(localStorage.getItem("parents") || "[]");
+      // Try backend signup first (recommended). If backend is not available,
+      // fall back to the original localStorage approach so the page still works
+      // during development.
+      const payload = { name, email, password, studentRoll };
+      const endpoint = '/createParent'; // When deployed, use full functions URL or configure a proxy
 
-      if (parents.find(p => p.email === email)) {
-        alert(" Account already exists! Please login.");
+      fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).then(async (res) => {
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error || 'Signup failed on server');
+        }
+        const data = await res.json();
+        // Store minimal session info (do not store passwords)
+        const session = { uid: data.uid, email, name, studentRoll };
+        localStorage.setItem('loggedInParent', JSON.stringify(session));
+        alert('Signup successful — you are now logged in. Redirecting...');
+        window.location.href = 'parentdash.html';
+      }).catch((err) => {
+        console.warn('Backend signup failed, falling back to localStorage:', err);
+        // Fallback: persist locally (development only)
+        const parents = JSON.parse(localStorage.getItem('parents') || '[]');
+        if (parents.find(p => p.email === email)) {
+          alert(' Account already exists! Please login.');
+          showLogin();
+          return;
+        }
+        parents.push({ name, email, password, studentRoll });
+        localStorage.setItem('parents', JSON.stringify(parents));
+        alert(' Signup successful (local fallback)! Please login.');
         showLogin();
-        return;
-      }
-
-      parents.push({ name, email, password, studentRoll });
-      localStorage.setItem("parents", JSON.stringify(parents));
-
-      alert(" Signup successful! Please login.");
-      showLogin();
+      });
     }
 
     // ✅ Handle Login

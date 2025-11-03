@@ -9,7 +9,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyA6Dz-Vz5PgEZQPBqQew0QIqKHu7ecZA4o",
   authDomain: "smart-pass-9b406.firebaseapp.com",
   projectId: "smart-pass-9b406",
-  storageBucket: "smart-pass-9b406.firebasestorage.app",
+  storageBucket: "smart-pass-9b406.appspot.com", // ✅ fixed here
   messagingSenderId: "932158553127",
   appId: "1:932158553127:web:6d33e47f0c61bc5e56a202",
   measurementId: "G-XM3G07TR05"
@@ -23,5 +23,5 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
-// ✅ Export them for use in other files
+// ✅ Export for use in other files
 export { app, auth, db, storage };

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -101,31 +102,40 @@
     </form>
   </div>
 
-  <script>
-document.getElementById("loginForm").addEventListener("submit", function(e) {
-  e.preventDefault();
+ <script type="module">
+  import { app, auth } from "./firebase/config.js";
+  import { 
+    signInWithEmailAndPassword 
+  } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-  const email = document.getElementById("email").value.trim().toLowerCase();
-  const password = document.getElementById("password").value.trim();
+  const loginForm = document.getElementById("loginForm");
 
-  const users = JSON.parse(localStorage.getItem("studentData") || '[]');
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-  if (users.length === 0) {
-    alert(" No registered students found. Please sign up first.");
-    return;
-  }
+    const email = document.getElementById("email").value.trim().toLowerCase();
+    const password = document.getElementById("password").value.trim();
 
-  const found = users.find(u => u.email === email && u.password === password);
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
 
-  if (found) {
-    alert(" Login Successful!");
-    localStorage.setItem("loggedInUser", JSON.stringify(found));
-    window.location.href = "new.html";
-  } else {
-    alert(" Invalid email or password.");
-  }
-});
+      alert("✅ Login Successful!");
+      console.log("User logged in:", user.email);
+
+      // Optional: store user locally if needed
+      localStorage.setItem("loggedInUser", JSON.stringify({ email: user.email }));
+
+      // Redirect after login
+      window.location.href = "new.html";
+
+    } catch (error) {
+      console.error("Login error:", error.message);
+      alert(" Login failed: " + error.message);
+    }
+  });
 </script>
+
 
 <script type="module" src="./studentSignIn.js"></script>
 
